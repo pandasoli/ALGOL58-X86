@@ -1,0 +1,4 @@
+-Iinclude
+-ansi
+-Wextra
+-Wno-deprecated-non-prototype
