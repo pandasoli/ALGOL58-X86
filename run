@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+mem_size=$1
+bin_path=build/a58
+
+if [[ ! -f $bin_path ]]; then
+	mkdir build
+	cmake . -B build
+fi
+
+cd build
+make
+cd ..
+
+exec $bin_path

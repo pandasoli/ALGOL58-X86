@@ -1,33 +1,23 @@
 #include <lexer/lexer.h>
+#include <parser/parser.h>
 #include <utils.h>
+#include <hashtable.h>
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
 
-#define MEM_ENV_VAR "MAXMEM_KB"
 
+int err;
 
-void setmemlimit() {
-	if(getenv(MEM_ENV_VAR) == NULL) return;
-
-	struct rlimit memlimit;
-
-	long bytes = atol(getenv(MEM_ENV_VAR)) * 1024;
-	memlimit.rlim_cur = bytes;
-	memlimit.rlim_max = bytes;
-
-	if (setrlimit(RLIMIT_AS, &memlimit) == -1) {
-		perror("setrlimit failed");
-		exit(1);
-	}
-}
 
 main() {
-	setmemlimit();
-
-	char source[] = "(1 + 2) * 3.0";
+	char source[] =
+		"WHILE SOME'THING < 3; % smth %\n"
+			"BEGIN\n"
+			"SOME'THING = SOME'THING * 100;\n"
+			"END\n"
+		;
 
 	int pipefd[2];
 	pipe(pipefd);
@@ -38,15 +28,24 @@ main() {
 	Lexer lex;
 	lexer_init(pipefd[0], &lex);
 
-	Token token;
-	int err;
+	/*Token token;*/
 
-	do {
-		if ((err = lex.lex(&lex, &token)))
-			break;
+	/*do {*/
+	/*	err = lex.lex(&lex, &token);*/
+	/*	if (err) break;*/
+	/*	printf("%s '%.*s'\n", token_strkind(token.kind), (int) token.location.len, token.literal);*/
+	/*}*/
+	/*while (err == 0 && token.kind != EOITk);*/
 
-		printf("%s %.*s\n", token_strkind(token.kind), (int) token.location.len, token.literal);
-		free((char *) token.literal);
+	Parser par;
+	parser_init(lex.lex, &lex, &par);
+
+	Node *ast = {0};
+	err = par.parse(&par, &ast);
+
+	printf("err %d\n", err);
+	if (ast) {
+		print_node(ast);
+		free_node(ast);
 	}
-	while (token.kind != EOITk);
 }

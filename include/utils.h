@@ -4,4 +4,7 @@
 /* TokenKind kind */
 char *token_strkind();
 
+/* NodeKind kind */
+char *node_strkind();
+
 #endif

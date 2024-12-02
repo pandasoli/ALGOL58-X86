@@ -11,9 +11,14 @@ add_executable(
 	src/lexer/lexer.c
 	src/lexer/token.c
 
+	src/parser/parser.c
+	src/parser/node.c
+
 	src/location.c
 	src/str.c
+	src/debug.c
 	src/utils.c
+	src/hashtable.c
 
 	src/main.c)
 

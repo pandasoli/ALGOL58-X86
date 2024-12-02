@@ -20,10 +20,11 @@ static append_cstr(self, cstr, len)
 		while (self->size + len + 1 > self->cap)
 			self->cap *= 2;
 
+		char *old_data = self->data;
 		self->data = realloc(self->data, self->cap);
 
 		if (self->data == NULL) {
-			fprintf(stderr, "realloc(%ld) returned NULL on %s\n", self->cap, __FUNCTION__);
+			fprintf(stderr, "realloc(%p, %ld) returned NULL on %s\n", old_data, self->cap, __func__);
 			return 1;
 		}
 	}
@@ -52,7 +53,7 @@ static extract_view(self, view)
 
 	char *data = malloc(self->size);
 	if (data == NULL) {
-		fprintf(stderr, "malloc(%ld) returned NULL on %s for data\n", self->size, __FUNCTION__);
+		fprintf(stderr, "malloc(%ld) returned NULL on %s for data\n", self->size, __func__);
 		return 1;
 	}
 
@@ -74,6 +75,7 @@ static void free_(self)
 	if (!self->cap) return;
 
 	free(self->data);
+	self->data = NULL;
 	self->size = 0;
 	self->cap = 0;
 }
